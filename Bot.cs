@@ -4,7 +4,8 @@
 {
     static void Main(string[] args) 
     { 
-        var bot = IW4MAdmin.Discord.Bot.getBot(); 
+        var bot = IW4MAdmin.Discord.Bot.getBot();
+        bot.Initialize();
     }
 }
 

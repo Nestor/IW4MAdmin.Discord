@@ -69,6 +69,7 @@
     <Compile Include="Debugging\ErrorCodes.cs" />
     <Compile Include="Debugging\ErrorMessage.cs" />
     <Compile Include="Debugging\Exceptions.cs" />
+    <Compile Include="Debugging\Logging.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Query\" />
