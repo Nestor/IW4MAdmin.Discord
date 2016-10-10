@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IW4MAdmin.Discord.Debugging
+namespace IW4MAdmin.Discord
 {
-    class ConfigException : Exception
+    class Commands
     {
-        public ConfigException(string msg) : base(msg) { }
     }
 }

@@ -6,6 +6,9 @@
     { 
         var bot = IW4MAdmin.Discord.Bot.getBot();
         bot.Initialize();
+
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
     }
 }
 

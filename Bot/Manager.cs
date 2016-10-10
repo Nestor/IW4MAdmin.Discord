@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Discord;
 using IW4MAdmin.Discord.Debugging;
+using IW4MAdmin.Discord.Query;
 
 namespace IW4MAdmin.Discord
 {
@@ -9,13 +10,14 @@ namespace IW4MAdmin.Discord
     {
         private static Bot _bot = null;
         private DiscordClient dc;
+        private Configuration.ConfigFile cfg;
+        private RestConnection rc;
 
-        public ~Bot()
+        ~Bot()
         {
             if (dc != null)
             {
                 dc.Disconnect();
-                dc.Dispose();
             }
         }
 
@@ -31,6 +33,29 @@ namespace IW4MAdmin.Discord
             dc = new DiscordClient();
             dc.MessageReceived += onMessageReceived;
             dc.Log.Message += onRequestLog;
+
+            try
+            {
+                cfg = Configuration.loadConfig("IW4MAdmin.Discord.cfg");
+            }           
+
+            catch (ConfigException e)
+            {
+                dc.Log.Info("No usable configuration found", e);
+                cfg = Configuration.createConfig();
+                try
+                {
+                    Configuration.saveConfig(cfg);
+                    dc.Log.Info("Saved new bot configuration", null);
+                }
+
+                catch (ConfigException ce)
+                {
+                    dc.Log.Error(ce.Message, ce);
+                }
+            }
+
+            rc = RestConnection.Initialize(new Uri(cfg.IW4MAdminURI + ':' + cfg.IW4MAdminPort + "/api/events"));
 
             try
             {
@@ -55,8 +80,8 @@ namespace IW4MAdmin.Discord
 
         async Task Connect()
         {  
-            await dc.Connect(Environment.GetEnvironmentVariable("discord-bot-token"), TokenType.Bot);
-            dc.Log.Info("Connected!", null);
+            await dc.Connect(cfg.BotToken, TokenType.Bot);
+            dc.Log.Info("IW4MAdmin.Discord has connected", null);
         }
     }
 }

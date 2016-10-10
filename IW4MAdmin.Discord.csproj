@@ -65,15 +65,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
+    <Compile Include="Bot\Commands.cs" />
+    <Compile Include="Bot\Configuration.cs" />
     <Compile Include="Bot\Manager.cs" />
     <Compile Include="Debugging\ErrorCodes.cs" />
     <Compile Include="Debugging\ErrorMessage.cs" />
     <Compile Include="Debugging\Exceptions.cs" />
     <Compile Include="Debugging\Logging.cs" />
+    <Compile Include="Query\RestConnection.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Query\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
