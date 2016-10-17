@@ -36,7 +36,7 @@ namespace IW4MAdmin.Discord
 
             catch (InvalidCastException)
             {
-                throw new Debugging.ConfigException("Configuration file not found");
+                throw new Debugging.ConfigException("Valid configuration file not found");
             }
 
             return cfg;
@@ -46,7 +46,7 @@ namespace IW4MAdmin.Discord
         {
             try
             {
-                string configText = JsonConvert.SerializeObject(cfg);
+                string configText = JsonConvert.SerializeObject(cfg, Formatting.Indented);
                 File.WriteAllText("IW4MAdmin.Discord.cfg", configText);
             }
 

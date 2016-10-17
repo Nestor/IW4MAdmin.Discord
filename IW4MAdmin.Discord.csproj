@@ -43,6 +43,13 @@
     <Reference Include="Discord.Net">
       <HintPath>packages\Discord.Net.0.9.6\lib\net45\Discord.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Discord.Net.Commands">
+      <HintPath>packages\Discord.Net.Commands.0.9.6\lib\net45\Discord.Net.Commands.dll</HintPath>
+    </Reference>
+    <Reference Include="Discord.Net.Modules, Version=0.9.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Discord.Net.Modules.0.9.6\lib\net45\Discord.Net.Modules.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -65,9 +72,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
-    <Compile Include="Bot\Commands.cs" />
+    <Compile Include="Bot\IW4MAdminModule.cs" />
     <Compile Include="Bot\Configuration.cs" />
     <Compile Include="Bot\Manager.cs" />
+    <Compile Include="Bot\Permissions.cs" />
     <Compile Include="Debugging\ErrorCodes.cs" />
     <Compile Include="Debugging\ErrorMessage.cs" />
     <Compile Include="Debugging\Exceptions.cs" />

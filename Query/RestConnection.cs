@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using RestSharp;
-using System.Threading.Tasks;
 
 namespace IW4MAdmin.Discord.Query
 {
@@ -17,12 +16,17 @@ namespace IW4MAdmin.Discord.Query
             return conn;
         }
 
+        public static RestConnection getConn()
+        {
+            return conn;
+        }
+
         private RestConnection(Uri loc)
         {
             rc = new RestClient(loc);
         }
 
-        public void makeRequest(string location, Dictionary<string, object> parameters,  Action<IRestResponse, RestRequestAsyncHandle> callback)
+        public void makeRequest(string location, Dictionary<string, object> parameters,  Action<IRestResponse> callback)
         {
             var request = new RestRequest(location, Method.GET);
 
