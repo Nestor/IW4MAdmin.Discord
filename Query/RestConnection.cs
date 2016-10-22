@@ -30,8 +30,11 @@ namespace IW4MAdmin.Discord.Query
         {
             var request = new RestRequest(location, Method.GET);
 
-            foreach (string key in parameters.Keys)
-                request.AddParameter(key, parameters[key]);
+            if (parameters != null)
+            {
+                foreach (string key in parameters.Keys)
+                    request.AddParameter(key, parameters[key]);
+            }
 
             rc.ExecuteAsync(request, callback);
         }

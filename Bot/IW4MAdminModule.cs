@@ -19,12 +19,16 @@ namespace IW4MAdmin.Discord
 
 
             mg.CreateCommands("", g =>
-            {    
+            {
                 g.CreateCommand("status")
                .Description("Query all running servers")
                .Alias("s")
                .MinPermissions(1)
                .Do(e => { onStatusRequest(e); });
+
+
+
+
             });
         }
 

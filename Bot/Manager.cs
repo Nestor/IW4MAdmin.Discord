@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using IW4MAdmin.Discord.Debugging;
@@ -15,6 +16,10 @@ namespace IW4MAdmin.Discord
         private DiscordClient dc;
         private Configuration.ConfigFile cfg;
         private RestConnection rc;
+        private List<Server> connectedServers;
+        private LinkedList<string> eventQueue;
+        private Message eventMessage;
+        private int messagesReceived = 0;
 
         ~Bot()
         {
@@ -33,9 +38,12 @@ namespace IW4MAdmin.Discord
 
         public void Initialize()
         {
+            connectedServers = new List<Server>();
+            eventQueue = new LinkedList<string>();
             dc = new DiscordClient();
             dc.Log.Message += onRequestLog;
             dc.MessageReceived += onMessageReceived;
+            dc.ServerAvailable += (s, e) => { dc.Log.Info("Manager", "Connected to server " + e.Server.Id, null); connectedServers.Add(e.Server); };
 
             try
             {
@@ -72,6 +80,7 @@ namespace IW4MAdmin.Discord
 
             try
             {
+                Task.Run(queryAPI);
                 dc.ExecuteAndWait(Connect);
             }
 
@@ -81,23 +90,81 @@ namespace IW4MAdmin.Discord
             }
         }
 
+   
         void onRequestLog(object sender, LogMessageEventArgs e)
         {
             if (e.Exception != null)
-                Logging.WriteLine(e.Message + "->" + e.Exception.Message);
+                Logging.WriteLine(e.Message + " -> " + e.Exception.Message);
             else
                 Logging.WriteLine(e.Message);
         }
 
         async void onMessageReceived(object sender, MessageEventArgs e)
         {
-           
+            messagesReceived++;
+
+            if (messagesReceived > 5)
+            {
+                eventMessage = await connectedServers[0].DefaultChannel.SendMessage(" ");
+                messagesReceived = 0;
+            }
         }
 
         async Task Connect()
-        {  
+        {
+            dc.Log.Info("Connect", "IW4MAdmin.Discord is connecting to Discord API", null);
             await dc.Connect(cfg.BotToken, TokenType.Bot);
-            dc.Log.Info("IW4MAdmin.Discord has connected", null);
+        }
+
+        private async Task queryAPI()
+        {
+            while (true)
+            {
+                if(connectedServers.Count > 0)
+                    rc.makeRequest("", null, async response => { if (response == null) return;  await onEventReceived(response.Content); });
+                await Task.Delay(5000);
+            }
+        }
+
+        private async Task onEventReceived(string content)
+        {
+            RestEvent e;
+            try
+            {
+                e = EventDeserialize.deserializeEvent(content);
+            }
+
+            catch (NullReferenceException)
+            {
+                return;
+            }
+
+            switch (e.Type)
+            {
+                case RestEvent.eType.NOTIFICATION:
+                    if (e.Title == "Disconnect")
+                        eventQueue.AddLast("```Diff\n-" + e.Target + " has disconnected\n```");
+                    else if (e.Title == "Connect")
+                        eventQueue.AddLast("```Diff\n+" + e.Target + " has connected\n```");
+                    else if (e.Title == "Chat")
+                        eventQueue.AddLast("```Apache\n" + e.Origin + ": \"" + e.Message + "\"\n```");
+                    break;
+                case RestEvent.eType.ALERT:
+                    await connectedServers[0].DefaultChannel.SendMessage(e.Message + " - " + e.Origin + " @here");
+                    break;
+            }
+
+            if (eventQueue.Count > 8)
+                eventQueue.RemoveFirst();
+
+            string queueString = "";
+            var enumer = eventQueue.GetEnumerator();
+            while (enumer.MoveNext())
+                queueString += enumer.Current + "\n";
+
+            if (eventMessage == null)
+                eventMessage = await connectedServers[0].DefaultChannel.SendMessage(" ");
+           // await eventMessage.Edit(queueString);
         }
     }
 }

@@ -80,6 +80,7 @@
     <Compile Include="Debugging\ErrorMessage.cs" />
     <Compile Include="Debugging\Exceptions.cs" />
     <Compile Include="Debugging\Logging.cs" />
+    <Compile Include="Query\IW4MAdminEvent.cs" />
     <Compile Include="Query\RestConnection.cs" />
   </ItemGroup>
   <ItemGroup />
